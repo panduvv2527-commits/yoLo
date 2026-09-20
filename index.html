@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#14100c" />
+<meta name="description" content="yoLl — The Index Room. A curated catalogue of 176 AI tools." />
+<title>yoLl — The Index Room</title>
+<script>
+  (function () {
+    try {
+      var t = localStorage.getItem('yoll-theme-v2');
+      if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t;
+      else if (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.dataset.theme = 'light';
+    } catch (e) {}
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --ink: #14100c;
+  --ink-2: #1c1611;
+  --ink-3: #251d16;
+  --paper: #efe6d6;
+  --paper-dim: #b3a48e;
+  --paper-faint: #6f6353;
+  --rule: #33291f;
+  --rule-soft: #261e16;
+  --copper: #d98a4e;
+  --copper-hi: #f0a96b;
+  --copper-lo: #8f5a2e;
+  --serif: 'Fraunces', 'Times New Roman', Georgia, serif;
+  --sans: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --maxw: 1240px;
+  --pad: clamp(18px, 4vw, 40px);
+  --ease: cubic-bezier(.2,.7,.2,1);
+}
+[data-theme="light"] {
+  --ink: #f3ecdf;
+  --ink-2: #ebe2d1;
+  --ink-3: #e2d7c3;
+  --paper: #1d1610;
+  --paper-dim: #5d5142;
+  --paper-faint: #978a76;
+  --rule: #cfc2aa;
+  --rule-soft: #ddd1ba;
+  --copper: #b4531a;
+  --copper-hi: #8f3f10;
+  --copper-lo: #d98a4e;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 90px; }
+body {
+  font-family: var(--sans);
+  background: var(--ink);
+  color: var(--paper);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  transition: background .35s, color .35s;
+  overflow-x: hidden;
+}
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; -webkit-tap-highlight-color: transparent; }
+a { color: inherit; }
+::selection { background: var(--copper); color: var(--ink); }
+:focus-visible { outline: 2px solid var(--copper); outline-offset: 3px; border-radius: 4px; }
+
+/* paper grain */
+body::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: .05; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+
+.wrap { max-width: var(--maxw); margin: 0 auto; padding-left: var(--pad); padding-right: var(--pad); }
+.mono { font-family: var(--mono); letter-spacing: .04em; }
+
+/* ---------- top bar ---------- */
+.top {
+  position: sticky; top: 0; z-index: 60;
+  background: color-mix(in srgb, var(--ink) 88%, transparent);
+  -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--rule);
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.top .wrap { display: flex; align-items: center; gap: 14px; height: 60px; }
+.brand { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; letter-spacing: -.02em; text-decoration: none; display: flex; align-items: baseline; gap: 8px; }
+.brand b { color: var(--copper); font-weight: 600; font-style: italic; }
+.brand small { font-family: var(--mono); font-size: .62rem; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--paper-faint); display: none; }
+@media (min-width: 620px) { .brand small { display: inline; } }
+.top .spacer { flex: 1; }
+.iconbtn {
+  min-width: 38px; height: 38px; padding: 0 12px; border: 1px solid var(--rule); border-radius: 999px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-size: .8rem; color: var(--paper-dim); transition: border-color .2s, color .2s, background .2s;
+}
+.iconbtn:hover { border-color: var(--copper); color: var(--paper); }
+.iconbtn .n { font-family: var(--mono); font-size: .68rem; color: var(--copper); }
+.iconbtn[aria-pressed="true"] { border-color: var(--copper); color: var(--copper); }
+
+/* ---------- masthead ---------- */
+.mast { padding: clamp(36px, 8vw, 92px) 0 clamp(26px, 5vw, 48px); position: relative; }
+.mast .eyebrow { display: flex; align-items: center; gap: 12px; font-family: var(--mono); font-size: .68rem; letter-spacing: .16em; text-transform: uppercase; color: var(--paper-faint); margin-bottom: clamp(18px, 3vw, 30px); }
+.mast .eyebrow i { flex: 0 0 34px; height: 1px; background: var(--copper); }
+.mast h1 {
+  font-family: var(--serif); font-weight: 300; font-variation-settings: "opsz" 144;
+  font-size: clamp(2.9rem, 12.5vw, 10.4rem); line-height: .86; letter-spacing: -.045em;
+  text-wrap: balance;
+}
+.mast h1 em { font-style: italic; font-weight: 300; color: var(--copper); padding-right: .04em; }
+.mast h1 .row { display: block; }
+.mast h1 .num {
+  display: inline-block; font-family: var(--mono); font-size: .17em; font-weight: 400; letter-spacing: .1em;
+  vertical-align: top; margin-left: .5em; margin-top: .9em; color: var(--paper-dim);
+  border: 1px solid var(--rule); border-radius: 999px; padding: .35em .9em; line-height: 1.2;
+}
+.mast-foot { display: grid; gap: 22px; margin-top: clamp(28px, 5vw, 52px); align-items: end; }
+@media (min-width: 860px) { .mast-foot { grid-template-columns: 1.3fr 1fr; gap: 60px; } }
+.mast-foot p { font-family: var(--serif); font-weight: 300; font-size: clamp(1.05rem, 2.2vw, 1.4rem); line-height: 1.4; color: var(--paper-dim); max-width: 34em; }
+.mast-foot p b { color: var(--paper); font-weight: 400; font-style: italic; }
+.stats { display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid var(--rule); }
+.stat { padding: 14px 0 0; }
+.stat + .stat { padding-left: 16px; border-left: 1px solid var(--rule-soft); }
+.stat .v { font-family: var(--serif); font-size: clamp(1.6rem, 4vw, 2.3rem); font-weight: 300; line-height: 1; letter-spacing: -.02em; }
+.stat .l { font-family: var(--mono); font-size: .6rem; letter-spacing: .14em; text-transform: uppercase; color: var(--paper-faint); margin-top: 6px; }
+
+/* ---------- marquee ---------- */
+.marquee { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); overflow: hidden; background: var(--ink-2); }
+.marquee-track { display: flex; width: max-content; animation: slide 60s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee span { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: 1.1rem; padding: 13px 26px; color: var(--paper-dim); white-space: nowrap; display: inline-flex; align-items: center; gap: 52px; }
+.marquee span::after { content: "✦"; color: var(--copper); font-style: normal; font-size: .7rem; }
+@keyframes slide { to { transform: translateX(-50%); } }
+
+/* ---------- spotlight ---------- */
+.spot { padding: clamp(34px, 6vw, 70px) 0 0; }
+.spot-card {
+  position: relative; overflow: hidden; border: 1px solid var(--rule); border-radius: 18px;
+  background:
+    radial-gradient(900px 300px at 100% 0%, color-mix(in srgb, var(--copper) 20%, transparent), transparent 60%),
+    var(--ink-2);
+  padding: clamp(22px, 4vw, 44px); display: grid; gap: 22px;
+}
+@media (min-width: 820px) { .spot-card { grid-template-columns: auto 1fr auto; align-items: center; gap: 44px; } }
+.spot-tag { font-family: var(--mono); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--copper); display: flex; align-items: center; gap: 8px; }
+.spot-tag::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--copper); box-shadow: 0 0 0 0 var(--copper); animation: pulse 2.2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--copper) 60%, transparent); } 70%,100% { box-shadow: 0 0 0 10px transparent; } }
+.spot-ico { font-size: clamp(3rem, 8vw, 5rem); line-height: 1; }
+.spot h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.7rem, 4.5vw, 3rem); letter-spacing: -.03em; line-height: 1.05; margin: 8px 0 10px; }
+.spot p { color: var(--paper-dim); max-width: 44ch; }
+.spot-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; text-decoration: none;
+  font-size: .85rem; font-weight: 500; border: 1px solid var(--rule); transition: transform .2s var(--ease), background .2s, border-color .2s, color .2s;
+}
+.btn:hover { transform: translateY(-2px); border-color: var(--copper); }
+.btn.primary { background: var(--copper); border-color: var(--copper); color: var(--ink); }
+.btn.primary:hover { background: var(--copper-hi); border-color: var(--copper-hi); }
+
+/* ---------- toolbar ---------- */
+.bar { position: sticky; top: calc(60px + env(safe-area-inset-top, 0px)); z-index: 40; background: color-mix(in srgb, var(--ink) 92%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-bottom: 1px solid var(--rule); margin-top: clamp(34px, 6vw, 64px); }
+.bar .wrap { padding-top: 14px; padding-bottom: 14px; display: grid; gap: 12px; }
+.search { position: relative; }
+.search input {
+  width: 100%; height: 50px; padding: 0 84px 0 46px; border-radius: 12px; border: 1px solid var(--rule);
+  background: var(--ink-2); font-size: 1rem; outline: none; transition: border-color .2s, box-shadow .2s;
+  -webkit-appearance: none; appearance: none;
+}
+.search input::placeholder { color: var(--paper-faint); }
+.search input:focus { border-color: var(--copper); box-shadow: 0 0 0 4px color-mix(in srgb, var(--copper) 16%, transparent); }
+.search input::-webkit-search-cancel-button { display: none; }
+.search svg { position: absolute; left: 15px; top: 50%; translate: 0 -50%; width: 19px; height: 19px; color: var(--paper-faint); pointer-events: none; }
+.search kbd { position: absolute; right: 12px; top: 50%; translate: 0 -50%; font-family: var(--mono); font-size: .68rem; color: var(--paper-faint); border: 1px solid var(--rule); border-radius: 6px; padding: 3px 8px; pointer-events: none; }
+@media (hover: none) { .search kbd { display: none; } .search input { padding-right: 16px; } }
+.controls-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 999px; padding: 3px; background: var(--ink-2); max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+.seg::-webkit-scrollbar { display: none; }
+.seg button { padding: 7px 14px; border-radius: 999px; font-size: .78rem; color: var(--paper-dim); white-space: nowrap; transition: background .2s, color .2s; }
+.seg button:hover { color: var(--paper); }
+.seg button[aria-pressed="true"] { background: var(--copper); color: var(--ink); font-weight: 500; }
+.controls-row .sp { flex: 1; }
+.result-note { font-family: var(--mono); font-size: .7rem; letter-spacing: .06em; color: var(--paper-faint); }
+.result-note b { color: var(--copper); font-weight: 500; }
+.viewseg button { padding: 7px 11px; }
+.viewseg svg { width: 16px; height: 16px; display: block; }
+
+/* ---------- layout ---------- */
+.layout { display: grid; gap: 0; padding-top: 22px; padding-bottom: clamp(60px, 9vw, 110px); }
+@media (min-width: 980px) { .layout { grid-template-columns: 232px 1fr; gap: 48px; padding-top: 38px; } }
+
+/* category rail */
+.rail { display: none; }
+@media (min-width: 980px) {
+  .rail { display: block; position: sticky; top: 210px; align-self: start; max-height: calc(100vh - 230px); overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--rule) transparent; padding-right: 6px; }
+}
+.rail h4 { font-family: var(--mono); font-size: .62rem; letter-spacing: .18em; text-transform: uppercase; color: var(--paper-faint); font-weight: 400; margin-bottom: 12px; }
+.rail button { width: 100%; display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--rule-soft); text-align: left; color: var(--paper-dim); font-size: .92rem; transition: color .2s, padding-left .25s var(--ease); }
+.rail button:hover { color: var(--paper); padding-left: 6px; }
+.rail button .c { font-family: var(--mono); font-size: .68rem; color: var(--paper-faint); }
+.rail button[aria-pressed="true"] { color: var(--copper); padding-left: 10px; box-shadow: inset 2px 0 0 var(--copper); }
+.rail button[aria-pressed="true"] .c { color: var(--copper); }
+
+/* mobile category scroller */
+.mcats { display: flex; gap: 8px; overflow-x: auto; margin: 0 calc(var(--pad) * -1) 20px; padding: 0 var(--pad) 4px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.mcats::-webkit-scrollbar { display: none; }
+@media (min-width: 980px) { .mcats { display: none; } }
+.mcats button { flex: 0 0 auto; padding: 8px 15px; border: 1px solid var(--rule); border-radius: 999px; font-size: .8rem; color: var(--paper-dim); white-space: nowrap; transition: all .2s; }
+.mcats button .c { font-family: var(--mono); font-size: .66rem; color: var(--paper-faint); margin-left: 6px; }
+.mcats button[aria-pressed="true"] { background: var(--copper); border-color: var(--copper); color: var(--ink); }
+.mcats button[aria-pressed="true"] .c { color: var(--ink); opacity: .7; }
+
+/* ---------- list (catalogue) ---------- */
+.list { list-style: none; border-top: 1px solid var(--rule); }
+.row {
+  position: relative; display: grid; grid-template-columns: 44px 1fr auto; gap: 4px 14px; align-items: center;
+  padding: 18px 6px; border-bottom: 1px solid var(--rule-soft); cursor: pointer;
+  transition: background .25s, padding .3s var(--ease);
+  opacity: 0; translate: 0 10px; animation: rise .5s var(--ease) forwards; animation-delay: calc(var(--i, 0) * 14ms);
+}
+@keyframes rise { to { opacity: 1; translate: 0 0; } }
+.row::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background: var(--copper); scale: 1 0; transition: scale .3s var(--ease); transform-origin: top; }
+.row:hover, .row:focus-within { background: linear-gradient(90deg, color-mix(in srgb, var(--copper) 9%, transparent), transparent 70%); padding-left: 16px; }
+.row:hover::before, .row:focus-within::before { scale: 1 1; }
+.row .no { font-family: var(--mono); font-size: .68rem; color: var(--paper-faint); }
+.row .ico { display: none; }
+.row .main { min-width: 0; }
+.row h3 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.25rem, 3vw, 1.75rem); letter-spacing: -.025em; line-height: 1.15; display: flex; align-items: center; gap: 10px; }
+.row h3 .em { font-size: .8em; }
+.row h3 button.open { text-align: left; }
+.row h3 button.open::after { content: ""; position: absolute; inset: 0; } /* stretched hit area */
+.row .desc { color: var(--paper-dim); font-size: .88rem; margin-top: 3px; max-width: 62ch; }
+.row .meta { display: none; align-items: center; gap: 10px; }
+.row .side { display: flex; align-items: center; gap: 8px; position: relative; z-index: 2; }
+.tag { font-family: var(--mono); font-size: .62rem; letter-spacing: .1em; text-transform: uppercase; padding: 4px 9px; border-radius: 999px; border: 1px solid var(--rule); color: var(--paper-dim); white-space: nowrap; }
+.tag.cat { display: none; }
+.tag.free, .tag.open { color: var(--copper); border-color: color-mix(in srgb, var(--copper) 45%, var(--rule)); }
+.tag.freemium { color: var(--paper); }
+.tag.paid { color: var(--paper-faint); }
+.fav { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: var(--paper-faint); border: 1px solid transparent; transition: color .2s, border-color .2s, scale .2s var(--ease); }
+.fav:hover { color: var(--copper); border-color: var(--rule); scale: 1.08; }
+.fav[aria-pressed="true"] { color: var(--copper); }
+.fav svg { width: 16px; height: 16px; }
+.fav[aria-pressed="true"] svg { fill: currentColor; }
+.go { width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--rule); display: none; place-items: center; color: var(--paper-dim); text-decoration: none; transition: all .25s var(--ease); }
+.go:hover { background: var(--copper); border-color: var(--copper); color: var(--ink); rotate: -45deg; }
+.go svg { width: 15px; height: 15px; }
+@media (min-width: 720px) {
+  .row { grid-template-columns: 56px 1fr auto; padding: 22px 8px; gap: 4px 22px; }
+  .row .side .tag.cat { display: inline-block; }
+  .go { display: grid; }
+}
+
+/* ---------- grid view ---------- */
+.list.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)); gap: 14px; border-top: 0; }
+.list.grid .row {
+  grid-template-columns: 1fr auto; grid-template-areas: "ico side" "main main"; align-content: start; gap: 18px 8px;
+  border: 1px solid var(--rule); border-radius: 16px; padding: 20px; background: var(--ink-2); min-height: 200px;
+  transition: border-color .25s, translate .3s var(--ease), background .25s;
+}
+.list.grid .row:hover, .list.grid .row:focus-within { padding-left: 20px; translate: 0 -3px; border-color: var(--copper); background: var(--ink-2); }
+.list.grid .row::before { display: none; }
+.list.grid .row .no { display: none; }
+.list.grid .row .ico { display: block; grid-area: ico; font-size: 2rem; line-height: 1; }
+.list.grid .row .side { grid-area: side; align-self: start; }
+.list.grid .row .main { grid-area: main; align-self: end; }
+.list.grid .row .side .tag.cat, .list.grid .row .go { display: none; }
+.list.grid .row h3 { font-size: 1.3rem; }
+.list.grid .row h3 .em { display: none; }
+.list.grid .row .desc { font-size: .84rem; }
+
+/* ---------- empty ---------- */
+.empty { padding: 80px 10px; text-align: center; grid-column: 1 / -1; }
+.empty .big { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: clamp(2rem, 6vw, 3.4rem); letter-spacing: -.03em; color: var(--paper-dim); }
+.empty p { color: var(--paper-faint); margin: 10px 0 22px; }
+
+/* ---------- drawer ---------- */
+.scrim { position: fixed; inset: 0; z-index: 80; background: rgba(8,5,3,.6); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); opacity: 0; pointer-events: none; transition: opacity .3s; }
+.scrim.on { opacity: 1; pointer-events: auto; }
+.drawer {
+  position: fixed; z-index: 90; background: var(--ink-2); border: 1px solid var(--rule); overflow-y: auto; overscroll-behavior: contain;
+  left: 0; right: 0; bottom: 0; max-height: 88vh; border-radius: 22px 22px 0 0; padding: 12px var(--pad) calc(28px + env(safe-area-inset-bottom, 0px));
+  translate: 0 105%; transition: translate .45s var(--ease); visibility: hidden;
+}
+.drawer.on { translate: 0 0; visibility: visible; }
+@media (min-width: 720px) {
+  .drawer { left: auto; top: 0; width: min(500px, 100vw); max-height: none; border-radius: 0; border-width: 0 0 0 1px; padding: calc(28px + env(safe-area-inset-top, 0px)) 36px 36px; translate: 105% 0; }
+  .drawer.on { translate: 0 0; }
+}
+.drawer .grab { width: 40px; height: 4px; border-radius: 4px; background: var(--rule); margin: 0 auto 18px; }
+@media (min-width: 720px) { .drawer .grab { display: none; } }
+.drawer .x { position: absolute; top: 14px; right: 14px; width: 38px; height: 38px; border: 1px solid var(--rule); border-radius: 50%; display: grid; place-items: center; color: var(--paper-dim); z-index: 2; }
+@media (min-width: 720px) { .drawer .x { top: calc(18px + env(safe-area-inset-top, 0px)); right: 22px; } }
+.drawer .x:hover { border-color: var(--copper); color: var(--paper); }
+.d-ico { font-size: 3.4rem; line-height: 1; margin: 6px 0 16px; }
+.d-cat { font-family: var(--mono); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--copper); }
+.drawer h2 { font-family: var(--serif); font-weight: 400; font-size: clamp(2rem, 6vw, 2.8rem); letter-spacing: -.035em; line-height: 1; margin: 8px 0 14px; }
+.drawer .lead { font-family: var(--serif); font-weight: 300; font-size: 1.15rem; line-height: 1.45; color: var(--paper-dim); }
+.dl { margin: 24px 0; border-top: 1px solid var(--rule); }
+.dl div { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid var(--rule-soft); font-size: .88rem; }
+.dl dt { font-family: var(--mono); font-size: .66rem; letter-spacing: .12em; text-transform: uppercase; color: var(--paper-faint); align-self: center; }
+.dl dd { text-align: right; word-break: break-all; }
+.d-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.d-similar h5 { font-family: var(--mono); font-size: .64rem; letter-spacing: .16em; text-transform: uppercase; color: var(--paper-faint); font-weight: 400; margin: 30px 0 10px; }
+.d-similar button { display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--rule-soft); text-align: left; font-family: var(--serif); font-size: 1.1rem; transition: color .2s, padding-left .25s var(--ease); }
+.d-similar button:hover { color: var(--copper); padding-left: 6px; }
+.d-similar button span { font-family: var(--mono); font-size: .62rem; color: var(--paper-faint); letter-spacing: .1em; text-transform: uppercase; }
+
+/* ---------- footer ---------- */
+footer { border-top: 1px solid var(--rule); background: var(--ink-2); padding: clamp(40px, 7vw, 80px) 0 calc(36px + env(safe-area-inset-bottom, 0px)); overflow: hidden; }
+.foot-big { font-family: var(--serif); font-weight: 300; font-style: italic; font-size: clamp(4rem, 24vw, 19rem); line-height: .8; letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 1px var(--rule); user-select: none; margin-bottom: 28px; white-space: nowrap; }
+.foot-row { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; font-family: var(--mono); font-size: .66rem; letter-spacing: .14em; text-transform: uppercase; color: var(--paper-faint); }
+.foot-row a { text-decoration: none; }
+.foot-row a:hover { color: var(--copper); }
+
+.toast { position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); translate: -50% 30px; opacity: 0; z-index: 120; background: var(--paper); color: var(--ink); font-size: .82rem; padding: 10px 18px; border-radius: 999px; transition: all .35s var(--ease); pointer-events: none; }
+.toast.on { opacity: 1; translate: -50% 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  .row { opacity: 1; translate: 0 0; }
+  .marquee-track { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="yoLl home"><b>yoLl</b><span>Index Room</span><small>/ AI tools catalogue</small></a>
+    <div class="spacer"></div>
+    <button class="iconbtn" id="favBtn" type="button" aria-pressed="false" aria-label="Show saved tools">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.3C.9 8.4 2.8 4.5 6.6 4.5c2.1 0 3.6 1.1 5.4 3 1.8-1.9 3.3-3 5.4-3 3.8 0 5.7 3.9 4.2 7.2C19.5 16.400 12 21 12 21z"/></svg>
+      <span>Saved</span><span class="n" id="favN">0</span>
+    </button>
+    <button class="iconbtn" id="themeBtn" type="button" aria-label="Toggle light and dark theme">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 3v18" /><path d="M12 3a9 9 0 0 1 0 18z" fill="currentColor"/></svg>
+    </button>
+  </div>
+</header>
+
+<main id="top">
+  <section class="wrap mast">
+    <div class="eyebrow"><i></i><span>Volume 02 &nbsp;·&nbsp; Hand-picked &amp; kept quiet</span></div>
+    <h1>
+      <span class="row">The AI</span>
+      <span class="row"><em>Index</em> Room<span class="num" id="heroNum">000</span></span>
+    </h1>
+    <div class="mast-foot">
+      <p>A calm, catalogued shelf of <b>artificial intelligence tools</b> — for images, words, code, film and sound. Search it, shelve it, and find the one that fits.</p>
+      <div class="stats" aria-label="Catalogue statistics">
+        <div class="stat"><div class="v" id="sTools">0</div><div class="l">Tools</div></div>
+        <div class="stat"><div class="v" id="sCats">0</div><div class="l">Shelves</div></div>
+        <div class="stat"><div class="v" id="sFree">0</div><div class="l">Free to try</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="marquee" aria-hidden="true"><div class="marquee-track" id="marquee"></div></div>
+
+  <section class="wrap spot" aria-labelledby="spotTitle">
+    <div class="spot-card" id="spot"></div>
+  </section>
+
+  <div class="bar" id="bar">
+    <div class="wrap">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Search 176 tools — try “video”, “open”, “resume”…" aria-label="Search tools" autocomplete="off" spellcheck="false" enterkeyhint="search">
+        <kbd>/</kbd>
+      </div>
+      <div class="controls-row">
+        <div class="seg" id="priceSeg" role="group" aria-label="Filter by price"></div>
+        <div class="sp"></div>
+        <span class="result-note" id="note" role="status" aria-live="polite"></span>
+        <div class="seg viewseg" role="group" aria-label="View">
+          <button type="button" id="vList" aria-pressed="true" aria-label="List view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+          <button type="button" id="vGrid" aria-pressed="false" aria-label="Grid view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="6.500" height="6.500" rx="1.500"/><rect x="13.500" y="4" width="6.500" height="6.500" rx="1.500"/><rect x="4" y="13.500" width="6.500" height="6.500" rx="1.500"/><rect x="13.500" y="13.500" width="6.500" height="6.500" rx="1.500"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap layout">
+    <aside class="rail" aria-label="Categories"><h4>Shelves</h4><div id="rail"></div></aside>
+    <section aria-label="Tools">
+      <div class="mcats" id="mcats" role="group" aria-label="Categories"></div>
+      <ul class="list" id="list"></ul>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-big" aria-hidden="true">yoLl</div>
+    <div class="foot-row">
+      <span>Curated by yoLl · <span id="year"></span></span>
+      <a href="#top">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="dTitle" aria-hidden="true"></aside>
+<div class="toast" id="toast" role="status"></div>
+
+<script type="application/json" id="toolsData">[{"n":"Midjourney","d":"Stunning AI art from text prompts, known for artistic quality.","c":"Image","p":"paid","u":"https://midjourney.com","i":"🖼️"},{"n":"DALL·E 3","d":"OpenAI's image generator integrated in ChatGPT & Bing.","c":"Image","p":"freemium","u":"https://openai.com/dall-e-3","i":"🎨"},{"n":"Stable Diffusion","d":"Open-source image model you can run locally or in the cloud.","c":"Image","p":"open","u":"https://stability.ai","i":"🌌"},{"n":"Leonardo AI","d":"Game-art focused image generation with fine-tuned models.","c":"Image","p":"freemium","u":"https://leonardo.ai","i":"🖌️"},{"n":"Adobe Firefly","d":"Adobe's generative AI for images, integrated into Creative Cloud.","c":"Image","p":"freemium","u":"https://firefly.adobe.com","i":"🔥"},{"n":"Ideogram","d":"AI image generator that renders text inside images accurately.","c":"Image","p":"freemium","u":"https://ideogram.ai","i":"💡"},{"n":"Playground AI","d":"Free online AI image creator with advanced editing.","c":"Image","p":"freemium","u":"https://playgroundai.com","i":"🎭"},{"n":"NightCafe","d":"AI art generator with multiple models and community challenges.","c":"Image","p":"freemium","u":"https://nightcafe.studio","i":"🌙"},{"n":"Flux (Black Forest Labs)","d":"State-of-the-art open image generation model.","c":"Image","p":"open","u":"https://blackforestlabs.ai","i":"⚡"},{"n":"ComfyUI","d":"Node-based open-source UI for Stable Diffusion workflows.","c":"Image","p":"open","u":"https://github.com/comfyanonymous/ComfyUI","i":"🧩"},{"n":"Automatic1111","d":"Popular open-source Stable Diffusion web UI.","c":"Image","p":"open","u":"https://github.com/AUTOMATIC1111/stable-diffusion-webui","i":"🖥️"},{"n":"Krea AI","d":"Real-time AI image generation and enhancement.","c":"Image","p":"freemium","u":"https://krea.ai","i":"✨"},{"n":"Recraft","d":"AI design tool for vector art, icons, and brand assets.","c":"Image","p":"freemium","u":"https://recraft.ai","i":"🎯"},{"n":"ChatGPT","d":"OpenAI's conversational AI for writing, Q&A, and creativity.","c":"Writing","p":"freemium","u":"https://chat.openai.com","i":"✍️"},{"n":"Claude","d":"Anthropic's thoughtful AI assistant, great for long documents.","c":"Writing","p":"freemium","u":"https://claude.ai","i":"📝"},{"n":"Jasper","d":"AI marketing copywriter for blogs, ads, and social posts.","c":"Writing","p":"paid","u":"https://jasper.ai","i":"🪄"},{"n":"Copy.ai","d":"Generate marketing copy, sales emails and blog ideas fast.","c":"Writing","p":"freemium","u":"https://copy.ai","i":"✒️"},{"n":"Grammarly","d":"AI writing assistant for grammar, tone, and clarity.","c":"Writing","p":"freemium","u":"https://grammarly.com","i":"✅"},{"n":"Writesonic","d":"AI writer for SEO articles, ads and product descriptions.","c":"Writing","p":"freemium","u":"https://writesonic.com","i":"📰"},{"n":"Rytr","d":"AI writing assistant for quick copy and content ideas.","c":"Writing","p":"freemium","u":"https://rytr.me","i":"⚡"},{"n":"Sudowrite","d":"AI writing partner for fiction authors and storytellers.","c":"Writing","p":"paid","u":"https://sudowrite.com","i":"📖"},{"n":"QuillBot","d":"AI paraphrasing and grammar checking tool.","c":"Writing","p":"freemium","u":"https://quillbot.com","i":"🪶"},{"n":"Wordtune","d":"AI writing companion with rewriting, summarization, and tone adjustment.","c":"Writing","p":"freemium","u":"https://wordtune.com","i":"✏️"},{"n":"ProWritingAid","d":"Writing editor with AI analysis and style suggestions.","c":"Writing","p":"freemium","u":"https://prowritingaid.com","i":"📝"},{"n":"Hyperwrite","d":"Personal AI writing assistant with AutoWrite and TypeAhead.","c":"Writing","p":"freemium","u":"https://hyperwriteai.com","i":"⚡"},{"n":"GitHub Copilot","d":"AI pair programmer that autocompletes code in your editor.","c":"Coding","p":"paid","u":"https://github.com/features/copilot","i":"🐙"},{"n":"Cursor","d":"AI-first code editor built for pair-programming with AI.","c":"Coding","p":"freemium","u":"https://cursor.sh","i":"⚡"},{"n":"Tabnine","d":"Privacy-focused AI code completion for teams.","c":"Coding","p":"freemium","u":"https://tabnine.com","i":"🧩"},{"n":"Replit AI","d":"AI assistant inside Replit IDE for code, debug and deploy.","c":"Coding","p":"freemium","u":"https://replit.com","i":"🛠️"},{"n":"Codeium","d":"Free AI autocomplete & chat for 70+ languages.","c":"Coding","p":"free","u":"https://codeium.com","i":"💠"},{"n":"Amazon CodeWhisperer","d":"AWS's AI coding companion, free for individuals.","c":"Coding","p":"freemium","u":"https://aws.amazon.com/codewhisperer","i":"📦"},{"n":"Sourcegraph Cody","d":"AI coding assistant with deep codebase understanding.","c":"Coding","p":"freemium","u":"https://sourcegraph.com/cody","i":"🔍"},{"n":"Blackbox AI","d":"AI coding assistant for developers, with code search.","c":"Coding","p":"freemium","u":"https://blackbox.ai","i":"⬛"},{"n":"Claude Code","d":"Anthropic's agentic coding tool for the terminal.","c":"Coding","p":"paid","u":"https://claude.com/claude-code","i":"⌨️"},{"n":"Aider","d":"Open-source AI pair programmer in your terminal.","c":"Coding","p":"open","u":"https://github.com/paul-gauthier/aider","i":"🧑‍💻"},{"n":"Cline","d":"Open-source autonomous coding agent for VS Code.","c":"Coding","p":"open","u":"https://github.com/cline/cline","i":"🤖"},{"n":"Continue","d":"Open-source AI code assistant for VS Code and JetBrains.","c":"Coding","p":"open","u":"https://github.com/continuedev/continue","i":"➡️"},{"n":"OpenHands","d":"Open-source platform for AI software development agents.","c":"Coding","p":"open","u":"https://github.com/All-Hands-AI/OpenHands","i":"🙌"},{"n":"Tabby","d":"Self-hosted AI coding assistant, open source.","c":"Coding","p":"open","u":"https://github.com/TabbyML/tabby","i":"🐱"},{"n":"OpenCode","d":"Open-source terminal-based AI coding agent.","c":"Coding","p":"open","u":"https://github.com/opencode-ai/opencode","i":"💻"},{"n":"Bolt.new","d":"AI-powered full-stack web app builder in the browser.","c":"Coding","p":"freemium","u":"https://bolt.new","i":"⚡"},{"n":"v0 by Vercel","d":"AI UI generator for React and Tailwind.","c":"Coding","p":"freemium","u":"https://v0.dev","i":"▲"},{"n":"Lovable","d":"AI full-stack app builder from natural language.","c":"Coding","p":"freemium","u":"https://lovable.dev","i":"💗"},{"n":"Runway","d":"AI video generation and editing suite (Gen-3).","c":"Video","p":"freemium","u":"https://runwayml.com","i":"🎬"},{"n":"Pika","d":"Turn text or images into short cinematic AI videos.","c":"Video","p":"freemium","u":"https://pika.art","i":"🎥"},{"n":"Sora","d":"OpenAI's text-to-video model for realistic clips.","c":"Video","p":"paid","u":"https://openai.com/sora","i":"🌀"},{"n":"Synthesia","d":"Create AI avatar videos for training & marketing.","c":"Video","p":"paid","u":"https://synthesia.io","i":"🧑‍💼"},{"n":"HeyGen","d":"AI spokesperson videos with realistic avatars & voice clones.","c":"Video","p":"freemium","u":"https://heygen.com","i":"🗣️"},{"n":"Luma Dream Machine","d":"High-quality AI video generation from text/images.","c":"Video","p":"freemium","u":"https://lumalabs.ai/dream-machine","i":"🌠"},{"n":"Invideo AI","d":"Create videos from text prompts with AI voiceover.","c":"Video","p":"freemium","u":"https://invideo.io","i":"📹"},{"n":"Descript","d":"AI video & podcast editing by editing text transcripts.","c":"Video","p":"freemium","u":"https://descript.com","i":"✂️"},{"n":"Google Veo 3.1","d":"Google DeepMind's advanced AI video generation model.","c":"Video","p":"paid","u":"https://deepmind.google/models/veo/","i":"🎥"},{"n":"Google Flow","d":"Google's AI filmmaking tool powered by Veo.","c":"Video","p":"freemium","u":"https://labs.google/flow","i":"🎞️"},{"n":"Wan 2.2","d":"Open-source video generation model from Alibaba.","c":"Video","p":"open","u":"https://github.com/Wan-Video/Wan2.1","i":"🌊"},{"n":"HunyuanVideo","d":"Tencent's open-source large video generation model.","c":"Video","p":"open","u":"https://github.com/Tencent/HunyuanVideo","i":"🐉"},{"n":"LTX-Video","d":"Open-source real-time video generation model.","c":"Video","p":"open","u":"https://github.com/Lightricks/LTX-Video","i":"⚡"},{"n":"Open-Sora","d":"Open-source Sora reproduction for video generation.","c":"Video","p":"open","u":"https://github.com/hpcaitech/Open-Sora","i":"🔓"},{"n":"Mochi 1","d":"Genmo's open-source video generation model.","c":"Video","p":"open","u":"https://github.com/genmoai/models","i":"🍡"},{"n":"Suno","d":"Generate full songs with vocals from a text prompt.","c":"Audio","p":"freemium","u":"https://suno.com","i":"🎵"},{"n":"ElevenLabs","d":"Ultra-realistic AI voice generation and cloning.","c":"Audio","p":"freemium","u":"https://elevenlabs.io","i":"🔊"},{"n":"Murf AI","d":"Studio-quality AI voiceovers for videos & ads.","c":"Audio","p":"freemium","u":"https://murf.ai","i":"🎙️"},{"n":"AIVA","d":"AI composer for cinematic and background music.","c":"Audio","p":"freemium","u":"https://aiva.ai","i":"🎼"},{"n":"Udio","d":"AI music generation rival to Suno, with strong vocals.","c":"Audio","p":"freemium","u":"https://udio.com","i":"🎧"},{"n":"Play.ht","d":"Realistic AI text-to-speech for podcasts & articles.","c":"Audio","p":"freemium","u":"https://play.ht","i":"📢"},{"n":"Voicemod","d":"AI voice changer and soundboard for real-time fun.","c":"Audio","p":"freemium","u":"https://voicemod.net","i":"🎤"},{"n":"Adobe Podcast","d":"AI-powered audio enhancement for clear voice recordings.","c":"Audio","p":"free","u":"https://podcast.adobe.com","i":"🎧"},{"n":"Google MusicFX","d":"Google's AI music generation tool from text prompts.","c":"Audio","p":"freemium","u":"https://labs.google/musicfx","i":"🎶"},{"n":"Google Lyria 3","d":"Google's advanced AI music generation model.","c":"Audio","p":"paid","u":"https://deepmind.google/technologies/lyria/","i":"🎹"},{"n":"Kokoro TTS","d":"Lightweight open-source text-to-speech model.","c":"Audio","p":"open","u":"https://github.com/hexgrad/kokoro","i":"🗣️"},{"n":"Chatterbox TTS","d":"Open-source expressive TTS with emotion control.","c":"Audio","p":"open","u":"https://github.com/resemble-ai/chatterbox","i":"💬"},{"n":"CosyVoice2","d":"Alibaba's open-source multilingual TTS model.","c":"Audio","p":"open","u":"https://github.com/FunAudioLLM/CosyVoice","i":"🌍"},{"n":"Dia TTS","d":"Open-source dialogue-focused text-to-speech model.","c":"Audio","p":"open","u":"https://github.com/nari-labs/dia","i":"💭"},{"n":"GPT-SoVITS","d":"Open-source voice cloning and TTS framework.","c":"Audio","p":"open","u":"https://github.com/RVC-Boss/GPT-SoVITS","i":"🎭"},{"n":"OpenVoice","d":"MyShell's open-source instant voice cloning.","c":"Audio","p":"open","u":"https://github.com/myshell-ai/OpenVoice","i":"🔊"},{"n":"Notion AI","d":"AI writing, summarizing & Q&A inside Notion.","c":"Productivity","p":"paid","u":"https://notion.so/product/ai","i":"📓"},{"n":"Mem","d":"AI-powered notes that organize themselves.","c":"Productivity","p":"freemium","u":"https://mem.ai","i":"🧠"},{"n":"Taskade","d":"AI to-do lists, mind maps and team workspaces.","c":"Productivity","p":"freemium","u":"https://taskade.com","i":"✅"},{"n":"Motion","d":"AI calendar that auto-plans your day and tasks.","c":"Productivity","p":"paid","u":"https://usemotion.com","i":"📅"},{"n":"Reclaim AI","d":"AI scheduling for habits, tasks and meetings.","c":"Productivity","p":"freemium","u":"https://reclaim.ai","i":"⏱️"},{"n":"Otter.ai","d":"AI meeting notes and transcription assistant.","c":"Productivity","p":"freemium","u":"https://otter.ai","i":"📝"},{"n":"Fireflies.ai","d":"AI notetaker for meetings, with search and analytics.","c":"Productivity","p":"freemium","u":"https://fireflies.ai","i":"🔥"},{"n":"Zapier AI","d":"AI-powered automation across 6000+ apps.","c":"Productivity","p":"freemium","u":"https://zapier.com/ai","i":"⚙️"},{"n":"Make (Integromat)","d":"Visual automation platform with AI capabilities.","c":"Productivity","p":"freemium","u":"https://make.com","i":"🔧"},{"n":"Beam","d":"MacOS productivity app with seamless ChatGPT integration.","c":"Productivity","p":"paid","u":"https://beamapp.ai","i":"💻"},{"n":"Perplexity","d":"AI answer engine with cited, real-time web sources.","c":"Research","p":"freemium","u":"https://perplexity.ai","i":"🔍"},{"n":"Elicit","d":"AI research assistant for literature reviews.","c":"Research","p":"freemium","u":"https://elicit.com","i":"📚"},{"n":"Consensus","d":"Search scientific papers and get AI summaries.","c":"Research","p":"freemium","u":"https://consensus.app","i":"🔬"},{"n":"Scite","d":"AI-powered citation and reference checking.","c":"Research","p":"freemium","u":"https://scite.ai","i":"📑"},{"n":"You.com","d":"AI search engine with multi-model chat.","c":"Research","p":"freemium","u":"https://you.com","i":"🌐"},{"n":"Semantic Scholar","d":"AI-powered academic search engine for research papers.","c":"Research","p":"free","u":"https://semanticscholar.org","i":"🎓"},{"n":"Google Deep Research","d":"Gemini's deep research mode for comprehensive reports.","c":"Research","p":"freemium","u":"https://gemini.google.com","i":"🔬"},{"n":"NotebookLM","d":"Google's AI notebook for document analysis and podcasts.","c":"Research","p":"free","u":"https://notebooklm.google.com","i":"📔"},{"n":"Figma AI","d":"AI features inside Figma for design and prototyping.","c":"Design","p":"freemium","u":"https://figma.com","i":"🎨"},{"n":"Uizard","d":"Turn text or sketches into editable UI designs.","c":"Design","p":"freemium","u":"https://uizard.io","i":"📱"},{"n":"Galileo AI","d":"Generate beautiful UI from a text prompt.","c":"Design","p":"paid","u":"https://usegalileo.ai","i":"✨"},{"n":"Framer AI","d":"Generate and publish full websites with AI.","c":"Design","p":"freemium","u":"https://framer.com","i":"🖥️"},{"n":"Khroma","d":"AI color palette generator that learns your taste.","c":"Design","p":"free","u":"https://khroma.co","i":"🌈"},{"n":"Looka","d":"AI logo and brand identity designer.","c":"Design","p":"paid","u":"https://looka.com","i":"🏷️"},{"n":"Canva Magic Studio","d":"AI-powered design tools inside Canva.","c":"Design","p":"freemium","u":"https://canva.com/magic","i":"✨"},{"n":"Miro AI","d":"AI-powered whiteboard platform for collaboration and prototyping.","c":"Design","p":"freemium","u":"https://miro.com","i":"🎨"},{"n":"Beautiful.ai","d":"Create beautiful presentations and visual stories with AI.","c":"Design","p":"paid","u":"https://www.beautiful.ai","i":"📊"},{"n":"Gamma","d":"AI presentation and document generator from text prompts.","c":"Design","p":"freemium","u":"https://gamma.app","i":"📽️"},{"n":"Gemini","d":"Google's multimodal AI assistant across apps.","c":"Chatbots","p":"freemium","u":"https://gemini.google.com","i":"♊"},{"n":"Grok","d":"xAI's witty chatbot with real-time X data.","c":"Chatbots","p":"freemium","u":"https://grok.com","i":"🤖"},{"n":"Poe","d":"Quora's hub to chat with many AI models in one app.","c":"Chatbots","p":"freemium","u":"https://poe.com","i":"💬"},{"n":"Character.AI","d":"Chat with AI characters and custom personas.","c":"Chatbots","p":"freemium","u":"https://character.ai","i":"🎭"},{"n":"Pi","d":"Inflection's empathetic personal AI companion.","c":"Chatbots","p":"free","u":"https://pi.ai","i":"🫧"},{"n":"DeepSeek","d":"Advanced AI chatbot with strong reasoning and coding.","c":"Chatbots","p":"freemium","u":"https://deepseek.com","i":"🧠"},{"n":"Mistral Le Chat","d":"Mistral's fast AI assistant with open models.","c":"Chatbots","p":"freemium","u":"https://chat.mistral.ai","i":"🌬️"},{"n":"HuggingChat","d":"Hugging Face's open-source chatbot hub.","c":"Chatbots","p":"free","u":"https://huggingface.co/chat","i":"🤗"},{"n":"Surfer SEO","d":"AI-driven SEO content optimization and audits.","c":"Marketing","p":"paid","u":"https://surferseo.com","i":"📈"},{"n":"AdCreative.ai","d":"Generate high-converting ad creatives with AI.","c":"Marketing","p":"paid","u":"https://adcreative.ai","i":"📣"},{"n":"Brandwell","d":"AI content + SEO writer for brands.","c":"Marketing","p":"paid","u":"https://brandwell.ai","i":"🏷️"},{"n":"Frase","d":"AI research & content briefs for SEO writers.","c":"Marketing","p":"freemium","u":"https://frase.io","i":"🔎"},{"n":"HubSpot AI","d":"AI content, email and CRM assistance for marketers.","c":"Marketing","p":"freemium","u":"https://hubspot.com/artificial-intelligence","i":"🧲"},{"n":"Mailchimp AI","d":"AI-powered email marketing and automation.","c":"Marketing","p":"freemium","u":"https://mailchimp.com","i":"✉️"},{"n":"Koala Writer","d":"AI article writer with SEO optimization and real-time data.","c":"Marketing","p":"paid","u":"https://koala.sh","i":"🐨"},{"n":"Ahrefs Brand Radar","d":"Tracks brand mentions and citations in ChatGPT, Perplexity, and Google AI.","c":"Marketing","p":"paid","u":"https://ahrefs.com/brand-radar","i":"📡"},{"n":"Windsor.ai","d":"AI-powered data collection from Google Ads, social media, and analytics.","c":"Marketing","p":"freemium","u":"https://windsor.ai","i":"📊"},{"n":"AutoGPT","d":"Open-source autonomous GPT-4 agent framework.","c":"Agents","p":"open","u":"https://github.com/Significant-Gravitas/AutoGPT","i":"🤖"},{"n":"LangChain","d":"Framework for building LLM-powered applications.","c":"Agents","p":"open","u":"https://github.com/langchain-ai/langchain","i":"🔗"},{"n":"LangFlow","d":"Visual builder for LangChain AI workflows.","c":"Agents","p":"open","u":"https://github.com/langflow-ai/langflow","i":"🌊"},{"n":"Dify","d":"Open-source LLM app development platform.","c":"Agents","p":"open","u":"https://github.com/langgenius/dify","i":"🧬"},{"n":"n8n","d":"Workflow automation with native AI capabilities.","c":"Agents","p":"open","u":"https://github.com/n8n-io/n8n","i":"🔀"},{"n":"CrewAI","d":"Framework for orchestrating role-playing AI agents.","c":"Agents","p":"open","u":"https://github.com/crewAIInc/crewAI","i":"👥"},{"n":"AutoGen","d":"Microsoft's framework for multi-agent conversations.","c":"Agents","p":"open","u":"https://github.com/microsoft/autogen","i":"💬"},{"n":"Flowise","d":"Open-source drag-and-drop LLM app builder.","c":"Agents","p":"open","u":"https://github.com/FlowiseAI/Flowise","i":"🎨"},{"n":"Ollama","d":"Run open-source LLMs locally with one command.","c":"Agents","p":"open","u":"https://github.com/ollama/ollama","i":"🦙"},{"n":"LocalAI","d":"Open-source OpenAI-compatible API for local models.","c":"Agents","p":"open","u":"https://github.com/mudler/LocalAI","i":"🏠"},{"n":"vLLM","d":"High-throughput LLM serving engine.","c":"Agents","p":"open","u":"https://github.com/vllm-project/vllm","i":"🚀"},{"n":"Text Generation WebUI","d":"Gradio-based UI for running LLMs locally.","c":"Agents","p":"open","u":"https://github.com/oobabooga/text-generation-webui","i":"🖥️"},{"n":"LM Studio","d":"Desktop app to run local LLMs with a GUI.","c":"Agents","p":"free","u":"https://lmstudio.ai","i":"💻"},{"n":"Jan","d":"Open-source ChatGPT alternative that runs offline.","c":"Agents","p":"open","u":"https://github.com/janhq/jan","i":"📴"},{"n":"Open WebUI","d":"Self-hosted web interface for LLMs.","c":"Agents","p":"open","u":"https://github.com/open-webui/open-webui","i":"🌐"},{"n":"15Five","d":"AI tool for employee engagement and regular feedback to management.","c":"HR","p":"paid","u":"https://www.15five.com","i":"📊"},{"n":"Betterworks","d":"AI-powered performance management tool for enterprises.","c":"HR","p":"paid","u":"https://www.betterworks.com","i":"📈"},{"n":"HireVue AI","d":"AI-powered video interviews for better hiring decisions.","c":"HR","p":"paid","u":"https://www.hirevue.com","i":"🎥"},{"n":"2021.ai","d":"AI governance and documentation platform for compliance.","c":"Legal","p":"paid","u":"https://2021.ai","i":"⚖️"},{"n":"Complio","d":"AI-assisted compliance platform for legal and regulatory teams.","c":"Legal","p":"paid","u":"https://kompl.io","i":"📋"},{"n":"Markup.legal","d":"AI legal assistant for contract review and legal matters.","c":"Legal","p":"paid","u":"https://markup.legal","i":"📄"},{"n":"Ailex","d":"Danish AI tool for reviewing draft contracts before signing.","c":"Legal","p":"paid","u":"https://syv.ai/produkter/ailex","i":"✍️"},{"n":"Cernel","d":"AI-generated product and category descriptions for e-commerce stores.","c":"E-commerce","p":"freemium","u":"https://cernel.ai","i":"🛒"},{"n":"Alva's AI","d":"Hyper-personalized email campaigns for e-commerce businesses.","c":"E-commerce","p":"paid","u":"https://www.alvas.ai","i":"📧"},{"n":"Zuzana","d":"AI platform that consolidates customer service across channels.","c":"E-commerce","p":"paid","u":"https://zuzana.ai","i":"💬"},{"n":"CarbonChain","d":"Analyze CO2 emissions and environmental impacts for ESG reporting.","c":"Data","p":"paid","u":"https://www.carbonchain.com","i":"🌍"},{"n":"Sylvera","d":"Track CO₂ credits to improve sustainability efforts.","c":"Data","p":"paid","u":"https://www.sylvera.com","i":"🌱"},{"n":"DataRobot","d":"Machine learning platform with automated model development and deployment.","c":"Data","p":"paid","u":"https://datarobot.com","i":"🤖"},{"n":"H2O.ai","d":"Open-source ML and AI platform with h2oGPT and Document AI.","c":"Data","p":"open","u":"https://h2o.ai","i":"💧"},{"n":"Dataiku","d":"Data science platform with AI agents and LLM Mesh.","c":"Data","p":"paid","u":"https://dataiku.com","i":"🔬"},{"n":"ThoughtSpot","d":"Search-driven analytics with natural language Q&A.","c":"Data","p":"paid","u":"https://thoughtspot.com","i":"🔍"},{"n":"Tableau (Einstein AI)","d":"Data visualization with Einstein AI and Tableau Pulse for insights.","c":"Data","p":"paid","u":"https://tableau.com","i":"📈"},{"n":"Microsoft Power BI","d":"Business analytics with Copilot AI and natural language Q&A.","c":"Data","p":"freemium","u":"https://powerbi.microsoft.com","i":"📉"},{"n":"DeepL","d":"Neural machine translation with high accuracy for professionals.","c":"Translation","p":"freemium","u":"https://deepl.com","i":"🌐"},{"n":"InnovationCast","d":"AI-powered platform that promotes innovation through idea development.","c":"Innovation","p":"paid","u":"https://innovationcast.com","i":"💡"},{"n":"Nano Banana Pro","d":"Google's flagship image model, excelling at character consistency and realism.","c":"Image","p":"freemium","u":"https://deepmind.google/models/nano-banana/","i":"🍌"},{"n":"GPT Image 2","d":"OpenAI's latest image generation model, built directly into ChatGPT.","c":"Image","p":"freemium","u":"https://openai.com/gpt-image","i":"🖼️"},{"n":"Seedream 5.0 Pro","d":"ByteDance's high-quality image generation and editing system for video pipelines.","c":"Image","p":"paid","u":"https://seed.bytedance.com","i":"🌱"},{"n":"Qwen-Image 3.0","d":"Alibaba's open-weight image model, offering strong performance.","c":"Image","p":"open","u":"https://github.com/QwenLM/Qwen-Image","i":"🟣"},{"n":"Kling 3.0","d":"Kuaishou's model for stylized, director-style storytelling with native dialogue.","c":"Video","p":"freemium","u":"https://klingai.com","i":"🎥"},{"n":"Veo 3.1","d":"Google DeepMind's model for cinematic realism and excellent camera control.","c":"Video","p":"paid","u":"https://deepmind.google/models/veo/","i":"🎬"},{"n":"Hailuo AI","d":"MiniMax's high-ranked video generation model for creative workflows.","c":"Video","p":"freemium","u":"https://hailuoai.video","i":"🎞️"},{"n":"Vidu Q3 Pro","d":"Shengshu Technology's video generation model, ranked highly for quality.","c":"Video","p":"paid","u":"https://www.vidu.com","i":"📹"},{"n":"PixVerse V6","d":"An AI video platform known for creative effects and ease of use.","c":"Video","p":"freemium","u":"https://pixverse.ai","i":"✨"},{"n":"Anyword","d":"Performance marketing AI writing tool with predictive scoring for copy.","c":"Writing","p":"paid","u":"https://anyword.com","i":"📈"},{"n":"editGPT","d":"Proofreading tool with a Track Changes-style interface to preserve your voice.","c":"Writing","p":"freemium","u":"https://editgpt.app","i":"📝"},{"n":"Scrivener","d":"Manuscript management tool with AI plugins for consistency checking in fiction.","c":"Writing","p":"paid","u":"https://www.literatureandlatte.com/scrivener","i":"📚"},{"n":"Windsurf","d":"AI IDE with the Cascade agent, offering strong value for pair programming.","c":"Coding","p":"freemium","u":"https://windsurf.com","i":"🏄"},{"n":"Devin","d":"Autonomous AI software engineer designed to handle entire projects.","c":"Coding","p":"paid","u":"https://devin.ai","i":"🧑‍💻"},{"n":"Codex","d":"OpenAI's terminal-first coding agent, running on GPT-5.5 for repo-aware tasks.","c":"Coding","p":"paid","u":"https://openai.com/codex","i":"⌨️"},{"n":"Stable Audio","d":"Stability AI's tool for generating short audio clips, loops, and sound effects.","c":"Audio","p":"freemium","u":"https://stability.ai/stable-audio","i":"🎛️"},{"n":"Soundraw","d":"AI music generator for royalty-free instrumental background music.","c":"Audio","p":"paid","u":"https://soundraw.io","i":"🎼"},{"n":"Beatoven.ai","d":"Mood-based music generator aimed at podcasters and video creators.","c":"Audio","p":"freemium","u":"https://www.beatoven.ai","i":"🎵"},{"n":"Genspark","d":"A Super Agent that orchestrates over 80 tools to take action on tasks.","c":"Agents","p":"freemium","u":"https://www.genspark.ai","i":"⚡"},{"n":"Monica","d":"An aggregator that brings multiple AI models into a single browser interface.","c":"Chatbots","p":"freemium","u":"https://monica.im","i":"🔮"},{"n":"Shopify Sidekick","d":"An AI assistant embedded in Shopify Admin for recommendations and actions.","c":"E-commerce","p":"paid","u":"https://www.shopify.com/sidekick","i":"🛍️"},{"n":"Shopify Storefront Agent","d":"AI-powered shopping assistant for online stores.","c":"E-commerce","p":"paid","u":"https://www.shopify.com","i":"🤖"}]</script>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ---------- data ---------- */
+  var PRICE = { free: 'Free', freemium: 'Freemium', paid: 'Paid', open: 'Open source' };
+  var raw = [];
+  try { raw = JSON.parse(document.getElementById('toolsData').textContent); } catch (e) { console.error(e); }
+
+  function safeURL(u) {
+    try { var x = new URL(u, location.href); return /^https?:$/.test(x.protocol) ? x.href : '#'; } catch (e) { return '#'; }
+  }
+  var seen = {};
+  var tools = raw.filter(function (t) {
+    if (!t || !t.n || !t.d || !t.c || !PRICE[t.p] || safeURL(t.u) === '#') return false;
+    var k = t.n.toLowerCase(); if (seen[k]) return false; seen[k] = 1; return true;
+  }).map(function (t, i) {
+    return { id: i, n: t.n, d: t.d, c: t.c, p: t.p, u: safeURL(t.u), i: t.i || '·',
+             host: (function () { try { return new URL(t.u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } })(),
+             s: (t.n + ' ' + t.d + ' ' + t.c + ' ' + PRICE[t.p]).toLowerCase() };
+  });
+
+  /* categories: ordered by size desc */
+  var counts = {};
+  tools.forEach(function (t) { counts[t.c] = (counts[t.c] || 0) + 1; });
+  var cats = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a] || a.localeCompare(b); });
+
+  /* ---------- state ---------- */
+  var favs = [];
+  var state = { cat: 'All', price: 'all', q: '', view: 'list', onlyFav: false };
+  var $ = function (id) { return document.getElementById(id); };
+  var listEl = $('list'), railEl = $('rail'), mcatsEl = $('mcats'), noteEl = $('note'), qEl = $('q');
+  var root = document.documentElement;
+
+  /* ---------- helpers ---------- */
+  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
+  var ICON_FAV = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7.500-4.600-9.600-9.300C.9 8.400 2.800 4.500 6.600 4.500c2.100 0 3.600 1.100 5.400 3 1.800-1.900 3.300-3 5.400-3 3.800 0 5.700 3.900 4.200 7.200C19.500 16.400 12 21 12 21z"/></svg>';
+  var ICON_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+  var toastT;
+  function toast(msg) { var t = $('toast'); t.textContent = msg; t.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(function () { t.classList.remove('on'); }, 1800); }
+  function pad(n, l) { n = String(n); while (n.length < l) n = '0' + n; return n; }
+
+  /* ---------- masthead stats / count-up ---------- */
+  var freeN = tools.filter(function (t) { return t.p === 'free' || t.p === 'freemium' || t.p === 'open'; }).length;
+  function countUp(node, to, fmt) {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) { node.textContent = fmt(to); return; }
+    var t0 = performance.now(), dur = 1100;
+    (function tick(now) {
+      var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      node.textContent = fmt(Math.round(to * e));
+      if (k < 1) requestAnimationFrame(tick);
+    })(t0);
+  }
+  countUp($('sTools'), tools.length, String);
+  countUp($('sCats'), cats.length, String);
+  countUp($('sFree'), freeN, String);
+  countUp($('heroNum'), tools.length, function (n) { return pad(n, 3); });
+  $('year').textContent = new Date().getFullYear();
+
+  /* marquee of names */
+  (function () {
+    var names = tools.map(function (t) { return t.n; });
+    var a = names.slice().sort(function () { return .5 - Math.random(); }).slice(0, 26);
+    var html = a.map(function (n) { var s = document.createElement('span'); s.textContent = n; return s.outerHTML; }).join('');
+    $('marquee').innerHTML = html + html;
+  })();
+
+  /* ---------- spotlight (deterministic per day) ---------- */
+  function spotlight() {
+    var d = new Date(); var seed = d.getFullYear() * 400 + d.getMonth() * 32 + d.getDate();
+    var pool = tools.filter(function (t) { return t.p !== 'paid'; });
+    var t = pool[seed % pool.length];
+    var box = $('spot'); box.textContent = '';
+    var left = el('div'); var ic = el('div', 'spot-ico', t.i); ic.setAttribute('aria-hidden', 'true'); left.appendChild(ic);
+    var mid = el('div');
+    mid.appendChild(el('div', 'spot-tag', 'Tool of the day'));
+    var h = el('h2', null, t.n); h.id = 'spotTitle'; mid.appendChild(h);
+    mid.appendChild(el('p', null, t.d));
+    var act = el('div', 'spot-actions');
+    var more = el('button', 'btn', 'Read entry'); more.type = 'button'; more.addEventListener('click', function () { openDrawer(t.id); });
+    var visit = el('a', 'btn primary', 'Visit ' + t.host + ' ↗'); visit.href = t.u; visit.target = '_blank'; visit.rel = 'noopener noreferrer';
+    act.append(visit, more);
+    box.append(left, mid, act);
+  }
+  spotlight();
+
+  /* ---------- filter chrome ---------- */
+  function buildChrome() {
+    var pr = $('priceSeg'); pr.textContent = '';
+    [['all', 'All'], ['free', 'Free'], ['freemium', 'Freemium'], ['paid', 'Paid'], ['open', 'Open source']].forEach(function (p) {
+      var b = el('button', null, p[1]); b.type = 'button'; b.dataset.p = p[0];
+      b.addEventListener('click', function () { state.price = p[0]; sync(); render(); });
+      pr.appendChild(b);
+    });
+    function catBtn(name, isRail) {
+      var b = el('button'); b.type = 'button'; b.dataset.c = name;
+      var n = name === 'All' ? tools.length : counts[name];
+      if (isRail) { b.append(el('span', null, name === 'All' ? 'Everything' : name), el('span', 'c', pad(n, 2))); }
+      else { b.append(document.createTextNode(name === 'All' ? 'Everything' : name), el('span', 'c', String(n))); }
+      b.addEventListener('click', function () { state.cat = name; sync(); render(); scrollToList(); });
+      return b;
+    }
+    railEl.textContent = ''; mcatsEl.textContent = '';
+    ['All'].concat(cats).forEach(function (c) { railEl.appendChild(catBtn(c, true)); mcatsEl.appendChild(catBtn(c, false)); });
+  }
+  function sync() {
+    Array.prototype.forEach.call($('priceSeg').children, function (b) { b.setAttribute('aria-pressed', String(b.dataset.p === state.price)); });
+    [railEl, mcatsEl].forEach(function (c) {
+      Array.prototype.forEach.call(c.children, function (b) { b.setAttribute('aria-pressed', String(b.dataset.c === state.cat)); });
+    });
+    var active = mcatsEl.querySelector('[aria-pressed="true"]');
+    if (active && active.scrollIntoView) { try { mcatsEl.scrollTo({ left: active.offsetLeft - 20, behavior: 'smooth' }); } catch (e) {} }
+    $('vList').setAttribute('aria-pressed', String(state.view === 'list'));
+    $('vGrid').setAttribute('aria-pressed', String(state.view === 'grid'));
+    $('favBtn').setAttribute('aria-pressed', String(state.onlyFav));
+    $('favN').textContent = favs.length;
+  }
+  function scrollToList() {
+    var bar = $('bar'); var y = bar.getBoundingClientRect().top + window.scrollY - 60;
+    if (window.scrollY > y - 4) window.scrollTo({ top: y, behavior: 'smooth' });
+  }
+
+  /* ---------- rendering ---------- */
+  function filtered() {
+    var q = state.q.trim().toLowerCase();
+    var words = q ? q.split(/\s+/) : [];
+    return tools.filter(function (t) {
+      if (state.cat !== 'All' && t.c !== state.cat) return false;
+      if (state.price !== 'all' && t.p !== state.price) return false;
+      if (state.onlyFav && favs.indexOf(t.id) < 0) return false;
+      for (var i = 0; i < words.length; i++) if (t.s.indexOf(words[i]) < 0) return false;
+      return true;
+    });
+  }
+
+  function row(t, idx) {
+    var li = el('li', 'row'); li.style.setProperty('--i', Math.min(idx, 24));
+    li.appendChild(el('span', 'no', pad(t.id + 1, 3)));
+    var ic = el('span', 'ico', t.i); ic.setAttribute('aria-hidden', 'true'); li.appendChild(ic);
+
+    var main = el('div', 'main');
+    var h = el('h3'); var ob = el('button', 'open', t.n); ob.type = 'button'; ob.setAttribute('aria-label', 'Open details for ' + t.n);
+    ob.addEventListener('click', function () { openDrawer(t.id); });
+    var em = el('span', 'em', t.i); em.setAttribute('aria-hidden', 'true');
+    h.append(ob);
+    main.append(h, el('p', 'desc', t.d));
+    li.appendChild(main);
+
+    var side = el('div', 'side');
+    side.append(el('span', 'tag cat', t.c), el('span', 'tag ' + t.p, PRICE[t.p]));
+    var fb = el('button', 'fav'); fb.type = 'button'; fb.innerHTML = ICON_FAV;
+    var on = favs.indexOf(t.id) > -1; fb.setAttribute('aria-pressed', String(on)); fb.setAttribute('aria-label', (on ? 'Remove ' : 'Save ') + t.n + (on ? ' from saved' : ''));
+    fb.addEventListener('click', function (e) { e.stopPropagation(); toggleFav(t.id); });
+    var go = el('a', 'go'); go.href = t.u; go.target = '_blank'; go.rel = 'noopener noreferrer'; go.setAttribute('aria-label', 'Visit ' + t.n); go.innerHTML = ICON_ARROW;
+    go.addEventListener('click', function (e) { e.stopPropagation(); });
+    side.append(fb, go);
+    li.appendChild(side);
+    return li;
+  }
+
+  function render() {
+    var list = filtered();
+    listEl.className = 'list' + (state.view === 'grid' ? ' grid' : '');
+    var frag = document.createDocumentFragment();
+    if (!list.length) {
+      var e = el('li', 'empty');
+      e.append(el('div', 'big', state.onlyFav && !favs.length ? 'Nothing saved yet.' : 'No entries found.'));
+      e.append(el('p', null, state.onlyFav && !favs.length ? 'Tap the heart on any tool to shelve it here.' : 'Try fewer words, or clear the filters.'));
+      var b = el('button', 'btn', 'Reset everything'); b.type = 'button';
+      b.addEventListener('click', function () { state.cat = 'All'; state.price = 'all'; state.q = ''; state.onlyFav = false; qEl.value = ''; sync(); render(); });
+      e.appendChild(b); frag.appendChild(e);
+    } else list.forEach(function (t, i) { frag.appendChild(row(t, i)); });
+    listEl.replaceChildren(frag);
+    var filt = state.cat !== 'All' || state.price !== 'all' || state.q.trim() || state.onlyFav;
+    noteEl.innerHTML = '';
+    var b = document.createElement('b'); b.textContent = list.length;
+    noteEl.append(b, document.createTextNode(filt ? ' of ' + tools.length + ' entries' : ' entries'));
+  }
+
+  /* ---------- favourites (in-memory; localStorage where available) ---------- */
+  try { var sv = JSON.parse(localStorage.getItem('yoll-favs-v2') || '[]'); if (Array.isArray(sv)) favs = sv.filter(function (n) { return tools[n]; }); } catch (e) {}
+  function persist() { try { localStorage.setItem('yoll-favs-v2', JSON.stringify(favs)); } catch (e) {} }
+  function toggleFav(id) {
+    var i = favs.indexOf(id);
+    if (i > -1) { favs.splice(i, 1); toast('Removed from saved'); } else { favs.push(id); toast('Saved “' + tools[id].n + '”'); }
+    persist(); sync();
+    if (state.onlyFav) render();
+    else { // update just the affected control(s) without re-animating list
+      Array.prototype.forEach.call(document.querySelectorAll('.row'), function () {});
+      render();
+    }
+    if (drawerId === id) fillDrawer(id);
+  }
+
+  /* ---------- drawer ---------- */
+  var drawer = $('drawer'), scrim = $('scrim'), drawerId = null, lastFocus = null;
+  function fillDrawer(id) {
+    var t = tools[id]; drawer.textContent = '';
+    var grab = el('div', 'grab');
+    var x = el('button', 'x'); x.type = 'button'; x.setAttribute('aria-label', 'Close details'); x.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+    x.addEventListener('click', closeDrawer);
+    var ic = el('div', 'd-ico', t.i); ic.setAttribute('aria-hidden', 'true');
+    var cat = el('div', 'd-cat', 'No. ' + pad(t.id + 1, 3) + ' · ' + t.c);
+    var h = el('h2', null, t.n); h.id = 'dTitle';
+    var lead = el('p', 'lead', t.d);
+    var dl = el('dl', 'dl');
+    [['Pricing', PRICE[t.p]], ['Shelf', t.c], ['Website', t.host]].forEach(function (r) {
+      var d = el('div'); d.append(el('dt', null, r[0]), el('dd', null, r[1])); dl.appendChild(d);
+    });
+    var act = el('div', 'd-actions');
+    var v = el('a', 'btn primary', 'Visit ' + t.n + ' ↗'); v.href = t.u; v.target = '_blank'; v.rel = 'noopener noreferrer';
+    var on = favs.indexOf(t.id) > -1;
+    var f = el('button', 'btn', on ? '♥ Saved' : '♡ Save'); f.type = 'button'; f.setAttribute('aria-pressed', String(on));
+    f.addEventListener('click', function () { toggleFav(t.id); });
+    var sh = el('button', 'btn', 'Copy link'); sh.type = 'button';
+    sh.addEventListener('click', function () {
+      var txt = t.n + ' — ' + t.u;
+      if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(txt).then(function () { toast('Link copied'); }, function () { toast(t.u); });
+      else toast(t.u);
+    });
+    act.append(v, f, sh);
+
+    var sim = tools.filter(function (o) { return o.c === t.c && o.id !== t.id; }).slice(0, 4);
+    drawer.append(grab, x, ic, cat, h, lead, dl, act);
+    if (sim.length) {
+      var box = el('div', 'd-similar'); box.appendChild(el('h5', null, 'More on this shelf'));
+      sim.forEach(function (o) {
+        var b = el('button'); b.type = 'button'; b.append(document.createTextNode(o.n), el('span', null, PRICE[o.p]));
+        b.addEventListener('click', function () { drawerId = o.id; fillDrawer(o.id); drawer.scrollTop = 0; }); box.appendChild(b);
+      });
+      drawer.appendChild(box);
+    }
+  }
+  function openDrawer(id) {
+    lastFocus = document.activeElement; drawerId = id; fillDrawer(id);
+    drawer.classList.add('on'); scrim.classList.add('on'); drawer.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function () { var x = drawer.querySelector('.x'); if (x) x.focus(); }, 60);
+  }
+  function closeDrawer() {
+    drawer.classList.remove('on'); scrim.classList.remove('on'); drawer.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = ''; drawerId = null;
+    if (lastFocus && lastFocus.focus) try { lastFocus.focus(); } catch (e) {}
+  }
+  scrim.addEventListener('click', closeDrawer);
+
+  /* focus trap inside drawer */
+  drawer.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    var f = drawer.querySelectorAll('a[href], button:not([disabled])'); if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- events ---------- */
+  var timer;
+  qEl.addEventListener('input', function (e) { clearTimeout(timer); var v = e.target.value; timer = setTimeout(function () { state.q = v; render(); }, 90); });
+  $('vList').addEventListener('click', function () { state.view = 'list'; sync(); render(); });
+  $('vGrid').addEventListener('click', function () { state.view = 'grid'; sync(); render(); });
+  $('favBtn').addEventListener('click', function () { state.onlyFav = !state.onlyFav; sync(); render(); scrollToList(); });
+  $('themeBtn').addEventListener('click', function () {
+    var next = root.dataset.theme === 'dark' ? 'light' : 'dark'; root.dataset.theme = next;
+    try { localStorage.setItem('yoll-theme-v2', next); } catch (e) {}
+    var m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = next === 'dark' ? '#14100c' : '#f3ecdf';
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { if (drawer.classList.contains('on')) closeDrawer(); else if (document.activeElement === qEl) { qEl.blur(); } }
+    var tag = (document.activeElement && document.activeElement.tagName) || '';
+    if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA' && !e.metaKey && !e.ctrlKey) { e.preventDefault(); qEl.focus(); qEl.select(); }
+  });
+
+  /* ---------- go ---------- */
+  buildChrome(); sync(); render();
+})();
+</script>
+</body>
+</html>
